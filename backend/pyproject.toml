@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "apkscan"
+version = "0.1.0"
+description = "Statická analýza a detekce vzorů malwaru v Android APK"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Matěj Řehák" }]
+dependencies = [
+    "androguard>=4.1",
+    "pydantic>=2.7",
+    "python-dotenv>=1.0",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.7", "mypy>=1.11", "pre-commit>=3.7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
