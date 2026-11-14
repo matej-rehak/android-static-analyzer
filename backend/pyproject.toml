@@ -19,6 +19,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.7", "mypy>=1.11", "pre-commit>=3.7"]
 
+[project.scripts]
+apkscan = "apkscan.cli:app"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
