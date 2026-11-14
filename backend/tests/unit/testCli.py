@@ -6,16 +6,16 @@ from apkscan.cli import app
 runner = CliRunner()
 
 
-# Příkaz version skončí bez chyby a vypíše aktuální verzi balíčku.
-def test_version_prints_package_version():
+def testVersionWritePackageVersion():
     result = runner.invoke(app, ["version"])
 
     assert result.exit_code == 0
     assert __version__ in result.output
 
 
-# Bez argumentů se místo chyby vypíše nápověda se seznamem příkazů.
-def test_no_arguments_shows_help():
+def testNoArgumentsShowsHelp():
     result = runner.invoke(app, [])
 
+    assert result.exit_code == 2
+    assert "Usage:" in result.output
     assert "version" in result.output

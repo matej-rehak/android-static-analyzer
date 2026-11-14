@@ -1,0 +1,2 @@
+class InvalidApkError(Exception):
+    pass
