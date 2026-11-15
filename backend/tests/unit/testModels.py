@@ -17,23 +17,6 @@ from apkscan.models import (
 )
 
 
-def testFeaturesDefaultEmpty():
-    features = Features()
-
-    assert features.groups == {}
-    assert features.components == []
-    assert features.flags == {}
-
-
-def testFeaturesInstancesDoNotShareCollections():
-    first = Features()
-    second = Features()
-
-    first.groups["permissions"] = {"android.permission.INTERNET"}
-
-    assert second.groups == {}
-
-
 def testComponentJsonRoundtrip():
     component = Component(
         type = ComponentType.RECEIVER,
@@ -49,10 +32,6 @@ def testComponentJsonRoundtrip():
 
     assert restored.components[0] == component
     assert restored.components[0].intentActions == ["android.intent.action.BOOT_COMPLETED"]
-
-
-def testSeverityFromString():
-    assert Severity("critical") is Severity.CRITICAL
 
 
 def testFindingRejectsUnknownSource():

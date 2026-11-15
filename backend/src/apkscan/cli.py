@@ -2,7 +2,7 @@ import typer
 
 from apkscan import __version__
 
-app = typer.Typer(help="Statická analýza Android APK.", no_args_is_help=True)
+app = typer.Typer(help = "Statická analýza Android APK.", no_args_is_help = True)
 
 
 @app.callback()

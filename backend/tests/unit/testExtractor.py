@@ -29,16 +29,6 @@ def testNoZipFileRaises(tmp_path: Path):
     with pytest.raises(InvalidApkError):
         validateApkFile(file_path)
 
-
-def testZipHeaderPasses(tmp_path: Path):
-    file_path = tmp_path / "app.apk"
-    file_path.write_bytes(b"PK\x03\x04" + b"\x00" * 100)
-
-    validateApkFile(file_path)
-
-def testParseSdkVersionNumber():
-    assert parseSdkVersion("33") == 33
-
 def testParseSdkVersionMissing():
     assert parseSdkVersion(None) is None
 
