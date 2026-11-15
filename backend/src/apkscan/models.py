@@ -96,3 +96,26 @@ class Report(StrictModel):
     findings: list[Finding] = Field(default_factory = list)
     mlPrediction: MlPrediction | None = None
     features: Features = Field(default_factory = Features)
+
+class ComponentCondition(StrictModel):
+    type: ComponentType | None = None
+    exported: bool | None = None
+    action: str | None = None
+
+
+class RuleCondition(StrictModel):
+    permission: str | None = None
+    intentAction: str | None = None
+    flag: str | None = None
+    component: ComponentCondition | None = None
+
+
+class Rule(StrictModel):
+    id: str
+    name: str
+    category: str
+    severity: Severity
+    mitre: list[str] = Field(default_factory = list)
+    description: str
+    allOf: list[RuleCondition] = Field(default_factory = list)
+    anyOf: list[RuleCondition] = Field(default_factory = list)
