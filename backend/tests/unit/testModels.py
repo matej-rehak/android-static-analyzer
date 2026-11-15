@@ -17,7 +17,7 @@ from apkscan.models import (
 )
 
 
-def test_features_default_empty():
+def testFeaturesDefaultEmpty():
     features = Features()
 
     assert features.groups == {}
@@ -25,7 +25,7 @@ def test_features_default_empty():
     assert features.flags == {}
 
 
-def test_features_instances_do_not_share_collections():
+def testFeaturesInstancesDoNotShareCollections():
     first = Features()
     second = Features()
 
@@ -34,57 +34,81 @@ def test_features_instances_do_not_share_collections():
     assert second.groups == {}
 
 
-def test_component_json_roundtrip():
+def testComponentJsonRoundtrip():
     component = Component(
-        type=ComponentType.RECEIVER,
-        name="com.example.BootReceiver",
-        exported=True,
-        intent_actions=["android.intent.action.BOOT_COMPLETED"],
+        type = ComponentType.RECEIVER,
+        name = "com.example.BootReceiver",
+        exported = True,
+        intentActions = ["android.intent.action.BOOT_COMPLETED"]
     )
-    features = Features(components=[component])
+    features = Features(
+        components = [component]
+    )
 
     restored = Features.model_validate_json(features.model_dump_json())
 
     assert restored.components[0] == component
+    assert restored.components[0].intentActions == ["android.intent.action.BOOT_COMPLETED"]
 
 
-def test_severity_from_string():
+def testSeverityFromString():
     assert Severity("critical") is Severity.CRITICAL
 
 
-def test_finding_rejects_unknown_source():
+def testFindingRejectsUnknownSource():
     with pytest.raises(ValidationError):
         Finding(
-            rule_id="X",
-            source="manual",
-            severity=Severity.LOW,
-            category="test",
+            ruleId = "X",
+            source = "manual",
+            severity = Severity.LOW,
+            category = "test"
         )
 
 
-def test_risk_score_out_of_range():
+def testUnknownFieldIsRejected():
     with pytest.raises(ValidationError):
-        Risk(score=120, level=RiskLevel.HIGH)
+        Risk(
+            score = 10.0,
+            level = RiskLevel.LOW,
+            rule_id = "X"
+        )
 
 
-def test_report_serializes_to_json():
+def testRiskScoreOutOfRange():
+    with pytest.raises(ValidationError):
+        Risk(
+            score = 120,
+            level = RiskLevel.HIGH
+        )
+
+
+def testReportSerializesToJson():
     report = Report(
-        tool_version="0.1.0",
-        analyzed_at=datetime.now(UTC),
-        apk=ApkInfo(file_name="app.apk", size_bytes=1, md5="x", sha1="y", sha256="z"),
-        risk=Risk(score=42.0, level=RiskLevel.MEDIUM),
-        findings=[
+        toolVersion = "0.1.0",
+        analyzedAt = datetime.now(UTC),
+        apk = ApkInfo(
+            fileName = "app.apk",
+            sizeBytes = 1,
+            md5 = "x",
+            sha1 = "y",
+            sha256 = "z"
+        ),
+        risk = Risk(
+            score = 42.0,
+            level = RiskLevel.MEDIUM
+        ),
+        findings = [
             Finding(
-                rule_id="SMS_INTERCEPT",
-                source=FindingSource.BEHAVIOR,
-                severity=Severity.CRITICAL,
-                category="fraud",
+                ruleId = "SMS_INTERCEPT",
+                source = FindingSource.BEHAVIOR,
+                severity = Severity.CRITICAL,
+                category = "fraud"
             )
-        ],
+        ]
     )
 
-    data = report.model_dump(mode="json")
+    data = report.model_dump(mode = "json")
 
     assert data["risk"]["level"] == "medium"
     assert data["findings"][0]["source"] == "behavior"
-    assert data["ml_prediction"] is None
+    assert data["mlPrediction"] is None

@@ -1,9 +1,10 @@
+import os
 from pathlib import Path
 
 import pytest
 
 from apkscan.exceptions import InvalidApkError
-from apkscan.extractor import computeFileHashes, validateApkFile
+from apkscan.extractor import computeFileHashes, loadApk, parseSdkVersion, validateApkFile
 
 
 def testFileHashesMatchKnownValues(tmp_path: Path):
@@ -34,3 +35,23 @@ def testZipHeaderPasses(tmp_path: Path):
     file_path.write_bytes(b"PK\x03\x04" + b"\x00" * 100)
 
     validateApkFile(file_path)
+
+def testParseSdkVersionNumber():
+    assert parseSdkVersion("33") == 33
+
+def testParseSdkVersionMissing():
+    assert parseSdkVersion(None) is None
+
+def testParseSdkVersionNotNumber():
+    assert parseSdkVersion("abc") is None
+
+def testLoadApk():
+    path = os.environ.get("APKSCAN_APK")
+    if path is None:
+        pytest.skip("není nastavena cesta k APK")
+
+    loaded = loadApk(Path(path))
+
+    assert loaded.info.package is not None
+    assert len(loaded.info.sha256) == 64
+    assert all(char in "0123456789abcdef" for char in loaded.info.sha256.lower())
